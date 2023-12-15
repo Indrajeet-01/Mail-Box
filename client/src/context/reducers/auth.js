@@ -7,14 +7,14 @@ import {
     LOGIN_FAIL,
     SET_TOKEN,
     LOGOUT,
-    
+    SET_EMAIL
   } from '../constants/auth';
   
   const initialState = {
     message: '',
     messageType: '',
     token: null,
-    
+    email:''
   };
   
   const userReducer = (state = initialState, action) => {
@@ -28,6 +28,7 @@ import {
         return {
           ...state,
           token: action.payload.access_token,
+          email: action.payload.email,
           message: action.payload,
           messageType: 'success',
         };
@@ -44,6 +45,13 @@ import {
           ...state,
           token: action.payload,
         };
+
+        case SET_EMAIL:
+      return {
+        ...state,
+        email: action.payload,
+      };
+
       
         case LOGOUT:
           return {

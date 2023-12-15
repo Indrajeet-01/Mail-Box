@@ -9,7 +9,7 @@ import {
   SET_MESSAGE,
   SET_TOKEN,
   LOGOUT,
-  
+  SET_EMAIL
 } from '../constants/auth'
 
 export const registerUser = (userData) => async (dispatch) => {
@@ -46,6 +46,12 @@ export const loginUser = (userData) => async (dispatch) => {
         type: SET_TOKEN, 
         payload: response.data.access_token,
       });
+
+      dispatch({
+        type: SET_EMAIL,
+        payload: response.data.email,
+      });
+  
     
   } catch (error) {
     dispatch({

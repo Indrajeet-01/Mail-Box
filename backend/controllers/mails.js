@@ -9,17 +9,19 @@ export const createAndSendEmail = async (req, res) => {
     const senderEmail = req.user.email; 
     console.log(senderEmail)
 
+    const contentString = JSON.stringify(content);
+
     // Save email to Inbox
     const inboxEmail = new Inbox({
-      content,
-      senderEmail,
+      content: contentString,
+      senderEmail,  
       subject,
     });
     await inboxEmail.save();
 
     // Save email to Sentbox
     const sentboxEmail = new Sentbox({
-      content,
+      content: contentString,
       receiverEmail,
       subject,
     });

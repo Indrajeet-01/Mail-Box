@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuth } from '../context/auth';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CreateMail = () => {
-  const { authState } = useAuth();
+  const dispatch = useDispatch();
+  const {token,email} = useSelector(state => state.user);
+  console.log(token,email)
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [receiverEmail, setReceiverEmail] = useState('');
@@ -14,9 +17,9 @@ const CreateMail = () => {
 
   // Import necessary libraries and dependencies
   const handleSend = async () => {
-    const { user } = authState;
-    if (!user || !user.email) {
-      console.error('User or user.email is undefined');
+    
+    if ( !token) {
+      console.error('User, user.email, or token is undefined');
       return;
     }
 
@@ -24,50 +27,27 @@ const CreateMail = () => {
       const contentState = editorState.getCurrentContent();
       const rawContentState = convertToRaw(contentState);
 
-      // Save email to 'emails' collection
-      const senderEmail = user.email.replace(/[@.]/g, '');
-      const senderEmailRef = encodeURIComponent(senderEmail);
-      const receiverEmailRef = encodeURIComponent(receiverEmail);
+      // Create an object with email data
+      const emailData = {
+        content: rawContentState,
+        receiverEmail,
+        subject,
+      };
 
-      // Sending to SentMail in the Realtime Database
-      const sentMailResponse = await fetch(
-        `https://mail-box-1415b-default-rtdb.asia-southeast1.firebasedatabase.app/${senderEmailRef}/SentMail.json`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            content: rawContentState,
-            receiverEmail: receiverEmail,
-            subject: subject,
-            timestamp: new Date().toISOString(),
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      const sentMailData = await sentMailResponse.json();
-      console.log('SentMail Response:', sentMailData);
-
-      // Sending to Inbox in the Realtime Database
-      const inboxResponse = await fetch(
-        `https://mail-box-1415b-default-rtdb.asia-southeast1.firebasedatabase.app/${receiverEmailRef}/Inbox.json`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            content: rawContentState,
-            senderEmail: user.email,
-            subject: subject,
-            timestamp: new Date().toISOString(),
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      const inboxData = await inboxResponse.json();
-      console.log('Inbox Response:', inboxData);
-
-      console.log('Email sent successfully!');
+      // Use Axios to send the email data to your Node.js backend
+      const response = await axios.post('http://localhost:6500/mail/create-send', emailData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (response.status === 201) {
+        console.log('Email sent successfully!');
+        // You may want to redirect the user or show a success message here
+      } else {
+        console.error('Error sending email:', response.statusText);
+        // Handle the error, show an error message, or redirect the user
+      }
     } catch (error) {
       console.error('Error sending email:', error);
     }
