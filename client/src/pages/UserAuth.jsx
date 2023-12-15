@@ -1,66 +1,45 @@
 
 import React, { useState } from 'react';
+import {useDispatch,} from 'react-redux'
 import { Form, Button,Container  } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import {  useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-// import './userAuth.css'
-import { useAuth } from '../context/auth.js';
-
-import { auth } from '../firebase.js';
+import { registerUser, loginUser } from '../context/actions/auth.js';
 
 const UserAuth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false); 
-  const { dispatch } = useAuth();
-
+  
+  const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const handleSignIn = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        
-        const user = userCredential.user;
-        try {
-          const token = await user.getIdToken(); 
-          dispatch({ type: 'SIGN_IN', user, token });
-          alert('login successful')
-          navigate('/create-mail');
-        } catch (error) {
-          console.error(error);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
+  const handleSignIn = async () => {
+    const userData = {
+      email,
+      password,
+    };
 
-  const handleSignUp = () => {
+    dispatch(loginUser(userData));
+    navigate('/')
+  };
+
+  const handleSignUp = async () => {
     if (password === confirmPassword) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(async (userCredential) => {
-          
-          const user = userCredential.user;
-          try {
-            const token = await user.getIdToken(); 
-            
-            dispatch({ type: 'SIGN_IN', user, token });
-            alert('user registered successfully')
-            navigate('/create-mail');
-          } catch (error) {
-            console.error(error);
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
+      const userData = {
+        email,
+        password,
+      };
+
+      dispatch(registerUser(userData));
+      navigate('/')
     } else {
       console.error("Password and Confirm Password do not match.");
     }
-  }
+  };
+
+  
 
   return (
     <Container fluid className="container-wrapper d-flex align-items-center justify-content-center" style={{ height: '100vh',width: '30%' }}>
@@ -110,6 +89,7 @@ const UserAuth = () => {
               Log In
             </Button>
           )}
+
 
           <p className={`mt-3 text-${isSignUp ? 'primary' : 'success'}`}>
             {isSignUp ? 'Already have an account?' : "Don't have an account yet?"}

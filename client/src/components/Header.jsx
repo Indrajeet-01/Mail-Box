@@ -1,17 +1,28 @@
 // Header.jsx
 
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/auth';
+import { useDispatch, useSelector } from 'react-redux';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { logoutUser } from '../context/actions/auth';
 
 
 const Header = () => {
-  const { authState, dispatch } = useAuth();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.token);
 
   const handleLogout = () => {
-     dispatch({ type: 'SIGN_OUT' });
+    dispatch(logoutUser(token));
   };
+
+  useEffect(() => {
+    
+    return () => {
+      
+    };
+  }, [token, dispatch]);
+
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-center align-items-between ">
@@ -40,7 +51,7 @@ const Header = () => {
           </ul>
 
           <div className="navbar-nav ml-auto">
-            {authState.token ? (
+            {token ? (
               <button className="btn btn-outline-danger" onClick={handleLogout}>
                 Logout
               </button>
