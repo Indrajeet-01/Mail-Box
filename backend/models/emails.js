@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const sentboxEmailSchema = new mongoose.Schema({
+const allEmailSchema = new mongoose.Schema({
     subject: {
         type: String,
         required: true,
@@ -9,17 +9,20 @@ const sentboxEmailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  senderEmail: {
+    type: String,
+    required: true,
+  },
   receiverEmail: {
     type: String,
     required: true,
   },
-  
   timestamp: {
     type: Date,
     default: Date.now,
   },
 });
 
-const Sentbox = mongoose.model('Sentbox', sentboxEmailSchema);
+const Emails = mongoose.model('Emails', allEmailSchema);
 
-export default Sentbox
+export default Emails

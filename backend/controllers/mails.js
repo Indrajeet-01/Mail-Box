@@ -1,6 +1,6 @@
 
-import Inbox from '../models/inbox.js'
-import Sentbox from '../models/sentbox.js';
+
+import Emails from '../models/emails.js';
 
 // Create and send email
 export const createAndSendEmail = async (req, res) => {
@@ -11,21 +11,13 @@ export const createAndSendEmail = async (req, res) => {
 
     const contentString = JSON.stringify(content);
 
-    // Save email to Inbox
-    const inboxEmail = new Inbox({
+    const Email = new Emails({
       content: contentString,
-      senderEmail,  
+      receiverEmail,  
+      senderEmail,
       subject,
     });
-    await inboxEmail.save();
-
-    // Save email to Sentbox
-    const sentboxEmail = new Sentbox({
-      content: contentString,
-      receiverEmail,
-      subject,
-    });
-    await sentboxEmail.save();
+    await Email.save();
 
     res.status(201).json({ message: 'Email created and sent successfully' });
   } catch (error) {
