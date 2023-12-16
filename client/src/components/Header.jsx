@@ -3,7 +3,7 @@
 import React,{useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { logoutUser } from '../context/actions/auth';
 
@@ -11,9 +11,11 @@ import { logoutUser } from '../context/actions/auth';
 const Header = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     dispatch(logoutUser(token));
+    navigate('/auth')
   };
 
   useEffect(() => {

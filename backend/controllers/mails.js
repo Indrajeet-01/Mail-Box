@@ -2,7 +2,7 @@
 
 import Emails from '../models/emails.js';
 
-// Create and send email
+// create and send email
 export const createAndSendEmail = async (req, res) => {
   try {
     const { content, receiverEmail, subject } = req.body;
@@ -26,10 +26,11 @@ export const createAndSendEmail = async (req, res) => {
   }
 };
 
+// emails received by user
 export const inbox = async (req, res) => {
   try {
     const userEmail = req.user.email; 
-
+  
     // Find emails where the receiverEmail matches the logged-in user's email
     const inboxEmails = await Emails.find({ receiverEmail: userEmail });
 
@@ -40,6 +41,7 @@ export const inbox = async (req, res) => {
   }
 };
 
+// emails send by user
 export const sentbox = async (req, res) => {
   try {
     const userEmail = req.user.email; 
@@ -54,6 +56,7 @@ export const sentbox = async (req, res) => {
   }
 };
 
+// get email to read 
 export const getEmailById = async (req, res) => {
   try {
     const emailId = req.params.emailId;
@@ -68,6 +71,21 @@ export const getEmailById = async (req, res) => {
     res.status(200).json({ email });
   } catch (error) {
     console.error('Error retrieving email details:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+// delete the email in inbox
+export const deleteEmail = async (req, res) => {
+  try {
+    const emailId = req.params.emailId;
+
+    // Use the emailId to delete the email from the Inbox
+    await Emails.findByIdAndDelete(emailId);
+
+    res.status(200).json({ message: 'Email deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting email:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };

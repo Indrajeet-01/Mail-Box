@@ -26,13 +26,23 @@ const ViewMail = () => {
     };
 
     fetchEmailDetails();
-  }, [emailId]);
+  }, [emailId,token]);
 
   if (!email) {
     return <div>Loading...</div>;
   }
 
-  const textContent = email.content && email.content.blocks
+  const formattedTimestamp = new Date(email.timestamp).toLocaleString('en-US', {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+
+  console.log('Content:', email.content);
+
+  const textContent = email.content?.blocks
     ? email.content.blocks.map(block => block.text).join('\n')
     : '';
 
@@ -49,7 +59,7 @@ const ViewMail = () => {
         <strong>Receiver:</strong> {email.receiverEmail}
       </div>
       <div>
-        <strong>Timestamp:</strong> {new Date(email.timestamp).toLocaleString()}
+        <strong>Timestamp:</strong> {formattedTimestamp}
       </div>
       <div className="mt-3">
         <strong>Content:</strong>
