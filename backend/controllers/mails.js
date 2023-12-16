@@ -89,3 +89,17 @@ export const deleteEmail = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+// Update the controller function in your backend
+export const markAsRead = async (req, res) => {
+  const emailId = req.params.emailId;
+
+  try {
+    // Find the email by ID and update the 'unread' status
+    await Emails.findByIdAndUpdate(emailId, { unread: false });
+    res.status(200).json({ message: 'Email marked as read successfully' });
+  } catch (error) {
+    console.error('Error marking email as read:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};

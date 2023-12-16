@@ -21,6 +21,10 @@ const allEmailSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  unread: {
+    type: Boolean,
+    default: true, 
+  },
 });
 
 const Emails = mongoose.model('Emails', allEmailSchema);

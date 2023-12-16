@@ -48,26 +48,61 @@ const Inbox = () => {
     fetchInboxEmails();
   }, [token]);
 
+  const markAsRead = async (emailId) => {
+    try {
+      // Call an API endpoint to mark the email as read
+      const response = await axios.put(
+        `http://localhost:6500/mail/read/${emailId}`,
+        null,  // Set the request body to null if not sending data
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Replace with your actual access token
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        // Update the local state accordingly
+        setInboxEmails(prevEmails =>
+          prevEmails.map(email =>
+            email._id === emailId ? { ...email, unread: false } : email
+          )
+        );
+      } else {
+        console.error('Error marking email as read:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error marking email as read:', error);
+    }
+  };
+  
+
   return (
     <div className="container mt-5">
-      <h2>Inbox</h2>
-      <ul className="list-group">
-      {inboxEmails.map((email) => (
-          <li key={email._id} className="list-group-item d-flex justify-content-between align-items-center">
-            <Link to={`/email/${email._id}`} className="text-dark text-decoration-none">
-              <strong>{email.subject}</strong> from {email.senderEmail}
-            </Link>
-            <span
-              className="badge bg-danger rounded-pill"
-              onClick={() => handleDelete(email._id)}
-              style={{ cursor: 'pointer' }}
-            >
-              X
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+  <h2>Inbox</h2>
+  <ul className="list-group">
+    {inboxEmails.map((email) => (
+      <li key={email._id} className="list-group-item d-flex justify-content-between align-items-center">
+        <Link
+          to={`/email/${email._id}`}
+          className={`text-dark text-decoration-none d-flex align-items-center ${email.unread ? 'unread' : ''}`}
+          onClick={() => markAsRead(email._id)}
+        >
+          {email.unread && <span className="badge bg-primary me-2">●</span>}
+          <strong>{email.subject}</strong> from {email.senderEmail}
+        </Link>
+        <span
+          className="badge bg-danger rounded-pill"
+          onClick={() => handleDelete(email._id)}
+          style={{ cursor: 'pointer' }}
+        >
+          X
+        </span>
+      </li>
+    ))}
+  </ul>
+</div>
+
   );
 };
 
