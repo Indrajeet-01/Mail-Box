@@ -43,6 +43,7 @@ const CreateMail = () => {
       });
       if (response.status === 201) {
         console.log('Email sent successfully!');
+        
         // You may want to redirect the user or show a success message here
       } else {
         console.error('Error sending email:', response.statusText);

@@ -42,9 +42,7 @@ const ViewMail = () => {
 
   console.log('Content:', email.content);
 
-  const textContent = email.content?.blocks
-    ? email.content.blocks.map(block => block.text).join('\n')
-    : '';
+  const textContent = email.content ? JSON.parse(email.content).blocks.map(block => block.text).join('\n') : '';
 
   return (
     <div className="container mt-5">

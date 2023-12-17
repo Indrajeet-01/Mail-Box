@@ -11,6 +11,7 @@ import { logoutUser } from '../context/actions/auth';
 const Header = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
+  const userEmail = useSelector((state) => state.user.email)
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -54,9 +55,14 @@ const Header = () => {
 
           <div className="navbar-nav ml-auto">
             {token ? (
+              <>
+              
               <button className="btn btn-outline-danger" onClick={handleLogout}>
                 Logout
               </button>
+              <span className="text-primary me-3" style={{marginLeft:'10px',marginTop:'5px'}}>{userEmail}</span>
+              </>
+              
             ) : (
               <Link to="/auth" className="btn btn-outline-primary">
                 Login
